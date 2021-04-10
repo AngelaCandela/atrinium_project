@@ -1,0 +1,31 @@
+.backdrop {
+    position: relative;
+    width: 100vw;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    z-index: 1;  
+}
+
+div[disabled] {
+    display: none;
+}
+
+.pop-up {
+    display: flex; 
+    flex-direction: column;  
+    padding: 35px;
+    padding-top: 45px;
+    box-sizing: border-box;
+    position: relative;
+    position: absolute;
+
+    background-color: white;
+    border-radius: 7px;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 25%);
+}
