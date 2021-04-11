@@ -13,9 +13,9 @@ function EditCompany() {
     const [sectors, setSectors] = useState([]);
 
     const [newData, setNewData] = useState ({
-        name: companyToEdit.nombre,
-        telephone: companyToEdit.telefono,
-        email: companyToEdit.telefono,
+        name: companyToEdit.name,
+        telephone: companyToEdit.telephone,
+        email: companyToEdit.email,
         sector: companyToEdit.sector
     });
 

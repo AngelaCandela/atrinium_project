@@ -7,6 +7,7 @@ import Sectors from "./pages/Sectors";
 import EditCompany from "./pages/EditCompany";
 import EditSector from "./pages/EditSector";
 import CreateCompany from "./pages/CreateCompany";
+import CreateSector from "./pages/CreateSector";
 
 export const GlobalContext = createContext({});
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/company/edit" component={EditCompany}/>
           <Route path="/sector/edit" component={EditSector}/>
           <Route path="/company/new" component={CreateCompany}/>
+          <Route path="/sector/new" component={CreateSector}/>
         </GlobalContext.Provider>
       </BrowserRouter>
     </>

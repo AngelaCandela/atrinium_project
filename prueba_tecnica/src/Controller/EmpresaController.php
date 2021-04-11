@@ -12,14 +12,31 @@ use App\Entity\Empresa;
 use App\Entity\RegistroEmpresa;
 use App\Repository\SectorRepository;
 use App\Repository\EmpresaRepository;
+use App\Service\SerializerService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EmpresaController extends AbstractController
 {
     /**
+     * @Route("/companies", name="companies")
+     */
+    public function index(EmpresaRepository $empresaRepo, SerializerService $serializer): Response
+    {
+        $companiesArray = [];
+        $companies = $empresaRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
+
+        foreach($companies as $company){
+
+            $companiesArray[] = $serializer->serializeCompany($company);
+        }
+
+        return $this->json($companiesArray);
+    }
+    
+    /**
      * @Route("/company/add", name="add-company")
      */
-    public function add(EntityManagerInterface $em, Request $req, SectorRepository $sectorRepo, ValidatorInterface $validator): Response
+    public function add(EntityManagerInterface $em, Request $req, SectorRepository $sectorRepo, ValidatorInterface $validator, SerializerService $serializer): Response
     {
         $body = $req->getContent();
         $jsonContent = json_decode($body);
@@ -63,29 +80,7 @@ class EmpresaController extends AbstractController
         $em->persist($company);
         $em->flush();
         
-        $response = [];
-        $response['id'] = $company->getId();
-        $response['name'] = $company->getNombre();
-        $response['telephone'] = $company->getTelefono();
-        $response['email'] = $company->getEmail();
-        $response['sector'] = $company->getSector()->getNombre();
-
-        return $this->json($response);
-    }
-
-    /**
-     * @Route("/company/find/{id}", name="find-company", methods={"GET"})
-     */
-    public function find($id, EmpresaRepository $empresaRepo): Response
-    {
-        $company = $empresaRepo->find($id);
-
-        $response = [];
-        $response['id'] = $company->getId();
-        $response['name'] = $company->getNombre();
-        $response['telephone'] = $company->getTelefono();
-        $response['email'] = $company->getEmail();
-        $response['sector'] = $company->getSector()->getNombre();
+        $response = $serializer->serializeCompany($company);
 
         return $this->json($response);
     }
@@ -93,7 +88,7 @@ class EmpresaController extends AbstractController
     /**
      * @Route("/company/edit", name="edit-company", methods={"PUT"})
      */
-    public function edit(EntityManagerInterface $em, Request $req, EmpresaRepository $empresaRepo, SectorRepository $sectorRepo, ValidatorInterface $validator): Response
+    public function edit(EntityManagerInterface $em, Request $req, EmpresaRepository $empresaRepo, SectorRepository $sectorRepo, ValidatorInterface $validator, SerializerService $serializer): Response
     {
         $body = $req->getContent();
         $jsonContent = json_decode($body);
@@ -139,12 +134,7 @@ class EmpresaController extends AbstractController
         $em->persist($company);
         $em->flush();
 
-        $response = [];
-        $response['id'] = $company->getId();
-        $response['name'] = $company->getNombre();
-        $response['telephone'] = $company->getTelefono();
-        $response['email'] = $company->getEmail();
-        $response['sector'] = $company->getSector()->getNombre();
+        $response = $serializer->serializeCompany($company);
 
         return $this->json($response);
     }
@@ -163,24 +153,14 @@ class EmpresaController extends AbstractController
     }
 
     /**
-     * @Route("/companies", name="companies")
+     * @Route("/company/find/{id}", name="find-company", methods={"GET"})
      */
-    public function index(EmpresaRepository $repo): Response
+    public function find($id, EmpresaRepository $empresaRepo, SerializerService $serializer): Response
     {
-        $companiesArray = [];
-        $companies = $repo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
+        $company = $empresaRepo->find($id);
 
-        foreach($companies as $company){
-            $item = [];
+        $response = $serializer->serializeCompany($company);
 
-            $item['id'] = $company->getId();
-            $item['name'] = $company->getNombre();
-            $item['telephone'] = $company->getTelefono();
-            $item['email'] = $company->getEmail();
-            $item['sector'] = $company->getSector()->getNombre();
-            $companiesArray[] = $item;
-        }
-
-        return $this->json($companiesArray);
+        return $this->json($response);
     }
 }

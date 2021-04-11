@@ -1,37 +1,14 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { GlobalContext } from "../App";
 import Navbar from "../components/Navbar";
 
-function EditSector() {
+function CreateSector() { 
     
     let history = useHistory();
 
-    const { sectorToEditId } = useContext(GlobalContext);
-    const [sectorToEdit, setSectorToEdit] = useState({});
-
     const [newData, setNewData] = useState ({
-        name: sectorToEdit.name
+        name: ""
     });
-
-    useEffect(() => {
-        console.log(sectorToEditId);
-        fetch(`http://localhost:8000/sector/find/${sectorToEditId}`, {method: 'GET'})
-        .then(response => {
-            if(!response.ok)
-                throw new Error(`Something went wrong: ${response.statusText}`);
-            
-            return response.json();
-        })
-        .then(sector => {
-            setSectorToEdit(sector);
-            setNewData({
-                name: sector.name
-            });
-        })
-        .catch(error => console.log('Error: ', error)
-        );
-    }, [])
 
     function validateCompulsoryFields(){
         
@@ -51,22 +28,21 @@ function EditSector() {
         
         let text = document.getElementById("text");
 
-        text.innerHTML = "This sector name is already being used.";
+        text.innerHTML = "This sector already exists.";
         text.style.color = "#ff0000";
     }
 
-    function editSector() {
+    function createSector() {
         if(validateCompulsoryFields()){
-            fetch('http://localhost:8000/sector/edit',
+            fetch('http://localhost:8000/sector/add',
             {
-                method: 'PUT',
+                method: 'POST',
                 cors: 'CORS',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(
                     {   
-                        sectorId: sectorToEditId,
                         newData: newData
                     })
             })
@@ -77,7 +53,7 @@ function EditSector() {
                 return response.json();
             })
             .then(sector => {
-                console.log(`The sector ${sector.name} has been edited successfully!`, sector);
+                console.log(`The sector ${sector.name} has been created successfully!`, sector);
                 history.push("/sectors");
             })
             .catch(error => {
@@ -91,29 +67,29 @@ function EditSector() {
     function handleName(e) {
         setNewData({...newData, name: e.target.value})
     }
-
+    
     function handleSubmit(e) {
         e.preventDefault();
-        editSector();
+        createSector();
     }
     
   return (      
     <>
         <Navbar />
         <div className="container">
-            <p>Hi, you're here to edit sector { sectorToEditId }</p>
+            <p>Hi, you're here to create a new sector!</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="inputCompanyName">Name*</label>
                     <input type="text" className="form-control" id="inputCompanyName" value={newData.name} onChange={handleName} />
-                    <span id="text"></span>
                 </div>
-                <button type="submit" className="btn btn-primary" value="Submit">Save changes</button>
-                <button type="button" className="btn btn-outline-primary" onClick={() => history.push("/sectors")}>Cancel</button>
+                <span id="text"></span>
+                <button type="submit" className="btn btn-primary" value="Submit">Create sector</button>
+                <button type="button" className="btn btn-primary" onClick={() => history.push("/sectors")}>Cancel</button>
           </form>
         </div>
     </>
   );
 }
 
-export default EditSector;
+export default CreateSector;

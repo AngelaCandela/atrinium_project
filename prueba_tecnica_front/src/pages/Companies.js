@@ -23,8 +23,7 @@ function Companies() {
         setDisabled(false);
     };
 
-    function deleteCompany(e) {
-        console.log(`You are about to delete company id: ${e.target.id}`);
+    function deleteCompany() {
         fetch(`http://localhost:8000/company/delete/${companyToDeleteId}`, {method: 'DELETE'})
         .then(response => {
             if(!response.ok)
@@ -57,39 +56,41 @@ function Companies() {
     <>
         <Navbar /> 
         <div className="container">
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Telephone</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Industry</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {companies.map((company, index) => {
-                    return  <tr key={index}>
-                                <th scope="row">{index+1}</th>
-                                <td>{company.name}</td>
-                                <td>{company.telephone}</td>
-                                <td>{company.email}</td>
-                                <td>{company.sector}</td>
-                                <td><button type="button" id={company.id} onClick={setIdAndRedirect}>Edit</button></td>
-                                <td><button type="button" id={company.id} onClick={setIdAndEnablePopUp}>Delete</button></td>
-                            </tr>
-                    })
-                }
-                </tbody>
-            </table>
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Telephone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Industry</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {companies.map((company, index) => {
+                        return  <tr key={index}>
+                                    <th scope="row">{index+1}</th>
+                                    <td>{company.name}</td>
+                                    <td>{company.telephone}</td>
+                                    <td>{company.email}</td>
+                                    <td>{company.sector}</td>
+                                    <td><button type="button" id={company.id} onClick={setIdAndRedirect}>Edit</button></td>
+                                    <td><button type="button" id={company.id} onClick={setIdAndEnablePopUp}>Delete</button></td>
+                                </tr>
+                        })
+                    }
+                    </tbody>
+                </table>
+            </div>
             <button type="button" onClick={() => history.push("/company/new")}>New Company</button>
             <div className="backdrop" disabled={disabled}>
                 <div className="pop-up">
                     <p>Are you sure you want to delete this company?</p>
                     <div className="d-flex flex-column">
-                        <button className="mr-4" type="button" onClick={deleteCompany}>Accept</button>
+                        <button type="button" onClick={deleteCompany}>Accept</button>
                         <button type="button" onClick={() => setDisabled(true)}>Cancel</button>
                     </div>
                 </div>
