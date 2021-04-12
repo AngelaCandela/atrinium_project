@@ -14,6 +14,18 @@ function Sectors() {
     const [disabled, setDisabled] = useState(true);
     const [showErrorMsg, setShowErrorMsg] = useState(true);
 
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState(
+        {   totalSectors: 0,
+            totalPages: 0,
+            currentPage: 1,
+            previousPage: false,
+            nextPage: false,
+            prevPageNumber: 0,
+            nextPageNumber: 0
+        }
+    )
+
     function setIdAndRedirect(e) {
         setSectorToEditId(e.target.id);
         history.push("/sector/edit");
@@ -49,18 +61,68 @@ function Sectors() {
     };
 
     useEffect(() => {
-        fetch('http://localhost:8000/sectors', {method: 'GET'})
+        fetch(`http://localhost:8000/sectors/${page}`, {method: 'GET'})
         .then(response => {
             if(!response.ok)
                 throw new Error(`Something went wrong: ${response.statusText}`);
             
             return response.json();
         })
-        .then(response => setSectors(response))
+        .then(response => {
+            setSectors(response.data);
+            setPagination(response.pagination);
+        })
         .catch(error => console.log('Error: ', error)
         );
-    }, [disabled])
+    }, [disabled, page])
     
+    function prevPageList(pagination){
+        if(pagination.prevPageNumber){
+            let listItem = document.getElementById('previous').classList.remove('disabled');
+            return(
+                <li class="page-item" onClick={() => setPage(pagination.prevPageNumber)}><a class="page-link" href="#">{pagination.prevPageNumber}</a></li>
+            )
+        }
+    }
+
+    function nextPageList(pagination){
+        if(pagination.nextPageNumber){
+            return(
+                <li class="page-item" onClick={() => setPage(pagination.nextPageNumber)}><a class="page-link" href="#">{pagination.nextPageNumber}</a></li>
+            )
+        }
+    }
+
+    function disablePrevious(pagination){
+        if(pagination.prevPageNumber === null){
+            let string = "disabled";
+            return string;
+        } else {
+            return null;
+        }
+    }
+
+    function disableNext(pagination){
+        if(pagination.nextPageNumber === null){
+            let string = "disabled";
+            return string;
+        } else {
+            return null;
+        }
+    }
+
+    function nextPage(pagination){
+        if(pagination.nextPageNumber){
+            setPage(pagination.nextPageNumber);
+        }
+    }
+
+    function previousPage(pagination){
+        if(pagination.prevPageNumber){
+            setPage(pagination.prevPageNumber);
+        }
+    }
+
   return (
     <>
         <Navbar />   
@@ -88,6 +150,21 @@ function Sectors() {
                     </tbody>
                 </table>
             </div>
+            <nav aria-label="...">
+                <ul className="pagination">
+                    <li id="previous" className={"page-item "+disablePrevious(pagination)}>
+                        <a className="page-link" tabindex="-1" onClick={() => previousPage(pagination)}>Previous</a>
+                    </li>
+                    {prevPageList(pagination)}
+                    <li className="page-item active">
+                        <a className="page-link" href="#">{pagination.currentPage}<span className="sr-only">(current)</span></a>
+                    </li>
+                    {nextPageList(pagination)}
+                    <li id="next" className={"page-item "+disableNext(pagination)} >
+                        <a className="page-link" onClick={() => nextPage(pagination)}>Next</a>
+                    </li>                      
+                </ul>
+            </nav>
             <button className="m-auto" type="button" onClick={() => history.push("/sector/new")}>New Sector</button>
             <div className="backdrop" disabled={disabled}>
                 <div className="pop-up">

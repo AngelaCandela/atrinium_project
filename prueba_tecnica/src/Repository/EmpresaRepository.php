@@ -19,6 +19,36 @@ class EmpresaRepository extends ServiceEntityRepository
         parent::__construct($registry, Empresa::class);
     }
 
+    public function findCompanies($em, $name, $sector) {
+
+        $var = "";
+
+        if($name !== ""){
+            /* $query->setParameter(1, $name); */
+            if($var === ""){
+                $var = $var."WHERE e.nombre LIKE '%$name%'";
+            }else{
+                $var = $var." AND e.nombre LIKE '%$name%'";
+            }
+        }
+        if($sector !== ""){
+            /* $query->setParameter(2, $sector); */
+            if($var === ""){
+                $var = $var."WHERE e.sector = "."'$sector'";
+            }else{
+                $var = $var." AND e.sector = "."'$sector'";
+            }
+        }
+        dump($var);
+
+        $query = $em->createQuery('SELECT e FROM App\Entity\Empresa e '.$var);
+        
+        $results = $query->getResult();
+        dump($results);
+        
+        return $results;
+    }
+
     // /**
     //  * @return Empresa[] Returns an array of Empresa objects
     //  */

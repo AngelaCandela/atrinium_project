@@ -29,3 +29,18 @@ div[disabled] {
     border-radius: 7px;
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 25%);
 }
+
+.filters {
+    display:flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.name-filter {
+    display:flex;
+    justify-content: space-between;
+}
+
+select#inputCompanySector{
+    max-width: 200px;
+}

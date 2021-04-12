@@ -19,6 +19,11 @@ class SectorRepository extends ServiceEntityRepository
         parent::__construct($registry, Sector::class);
     }
 
+    public function findAllQueryBuilder()
+    {
+        return $this->createQueryBuilder('sectors');
+    }
+
     // /**
     //  * @return Sector[] Returns an array of Sector objects
     //  */

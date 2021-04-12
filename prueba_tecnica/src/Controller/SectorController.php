@@ -13,24 +13,75 @@ use App\Entity\RegistroSector;
 use App\Repository\SectorRepository;
 use App\Service\SerializerService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class SectorController extends AbstractController
 {
+
     /**
-     * @Route("/sectors", name="sectors")
+     * @Route("/sectors", name="select-sectors")
      */
-    public function index(SectorRepository $sectorRepo, SerializerService $serializer): Response
+    public function selectSectors(SectorRepository $sectorRepo, SerializerService $serializer): Response
     {
         $sectorsArray = [];
         $sectors = $sectorRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
 
         foreach($sectors as $sector){
-                        
+
             $sectorsArray[] = $serializer->serializeSector($sector);
         }
 
         return $this->json($sectorsArray);
     }
+
+    /**
+     * @Route("/sectors/{page}", name="sectors")
+     */
+    public function index($page, SectorRepository $sectorRepo, SerializerService $serializer): Response
+    {
+        $sectorsArray = [];
+        $sectors = $sectorRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
+
+        foreach($sectors as $sector){
+
+            $sectorsArray[] = $serializer->serializeSector($sector);
+        }
+
+        $adapter = new ArrayAdapter($sectorsArray);
+        $pagerfanta = new Pagerfanta($adapter);
+        
+        $pagerfanta->setMaxPerPage(10);
+        $totalPages = $pagerfanta->getNbPages();
+        $totalSectors = count($sectorsArray);
+
+        $currentPage = $pagerfanta->setCurrentPage($page);
+        $prevPageNumber = null;
+        $nextPageNumber = null;
+
+        if ($pagerfanta->hasPreviousPage()) {
+            $prevPageNumber = $pagerfanta->getPreviousPage();
+        }
+        if ($pagerfanta->hasNextPage()) {
+            $nextPageNumber = $pagerfanta->getNextPage();
+        }
+        
+        $pagerfanta->getCurrentPage();
+        $pagination = [];
+        $pagination['totalSectors'] = $totalSectors;
+        $pagination['totalPages'] = $totalPages;
+        $pagination['currentPage'] = $page;
+        $pagination['prevPageNumber'] = $prevPageNumber;
+        $pagination['nextPageNumber'] = $nextPageNumber;
+
+        $response = [];
+        $response['pagination'] = $pagination;
+        
+        $currentPageResults = $pagerfanta->getCurrentPageResults();
+        $response['data'] = $currentPageResults;
+
+        return $this->json($response);
+    }    
     
     /**
      * @Route("/sector/add", name="add-sector")
@@ -52,6 +103,7 @@ class SectorController extends AbstractController
             $formErrors['nameError'] = $nameError[0]->getMessage();
         }
         if($formErrors) {
+            dump($formErrors);
             return new JsonResponse($formErrors);
         }
 

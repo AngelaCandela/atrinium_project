@@ -14,23 +14,63 @@ use App\Repository\SectorRepository;
 use App\Repository\EmpresaRepository;
 use App\Service\SerializerService;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class EmpresaController extends AbstractController
 {
     /**
-     * @Route("/companies", name="companies")
+     * @Route("/companies/{page}", name="companies")
      */
-    public function index(EmpresaRepository $empresaRepo, SerializerService $serializer): Response
+    public function index($page, Request $req, EmpresaRepository $empresaRepo, EntityManagerInterface $em, SerializerService $serializer): Response
     {
+        $var = "";
+        $name = $req->query->get('name');
+        $sector = $req->query->get('sector');
+
         $companiesArray = [];
-        $companies = $empresaRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
+        //$companies = $empresaRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
+        
+        $companies = $empresaRepo->findCompanies($em, $name, $sector);
 
         foreach($companies as $company){
 
             $companiesArray[] = $serializer->serializeCompany($company);
         }
 
-        return $this->json($companiesArray);
+        $adapter = new ArrayAdapter($companiesArray);
+        $pagerfanta = new Pagerfanta($adapter);
+        
+        $pagerfanta->setMaxPerPage(10);
+        $totalPages = $pagerfanta->getNbPages();
+        $totalSectors = count($companiesArray);
+
+        $currentPage = $pagerfanta->setCurrentPage($page);
+        $prevPageNumber = null;
+        $nextPageNumber = null;
+
+        if ($pagerfanta->hasPreviousPage()) {
+            $prevPageNumber = $pagerfanta->getPreviousPage();
+        }
+        if ($pagerfanta->hasNextPage()) {
+            $nextPageNumber = $pagerfanta->getNextPage();
+        }
+        
+        $pagerfanta->getCurrentPage();
+        $pagination = [];
+        $pagination['totalSectors'] = $totalSectors;
+        $pagination['totalPages'] = $totalPages;
+        $pagination['currentPage'] = $page;
+        $pagination['prevPageNumber'] = $prevPageNumber;
+        $pagination['nextPageNumber'] = $nextPageNumber;
+
+        $response = [];
+        $response['pagination'] = $pagination;
+        
+        $currentPageResults = $pagerfanta->getCurrentPageResults();
+        $response['data'] = $currentPageResults;
+
+        return $this->json($response);
     }
     
     /**

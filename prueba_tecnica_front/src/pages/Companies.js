@@ -9,9 +9,29 @@ function Companies() {
     let history = useHistory();
 
     const [companies, setCompanies] = useState([]);
+    const [sectors, setSectors] = useState([]);
     const { setCompanyToEditId } = useContext(GlobalContext);
     const [companyToDeleteId, setCompanyToDeleteId] = useState();
     const [disabled, setDisabled] = useState(true);
+
+    const [filters, setFilters] = useState(
+        {
+            nameInput: "",
+            sectorInput: ""
+        }
+    )
+
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState(
+        {   totalSectors: 0,
+            totalPages: 0,
+            currentPage: 1,
+            previousPage: false,
+            nextPage: false,
+            prevPageNumber: 0,
+            nextPageNumber: 0
+        }
+    )
 
     function setIdAndRedirect(e) {
         setCompanyToEditId(e.target.id);
@@ -40,22 +60,108 @@ function Companies() {
     };
 
     useEffect(() => {
-        fetch('http://localhost:8000/companies', {method: 'GET'})
+        fetch(`http://localhost:8000/companies/${page}?name=${filters.nameInput}&sector=${filters.sectorInput}`, {method: 'GET'})
         .then(response => {
             if(!response.ok)
                 throw new Error(`Something went wrong: ${response.statusText}`);
             
             return response.json();
         })
-        .then(response => setCompanies(response))
+        .then(response => {
+            setCompanies(response.data);
+            setPagination(response.pagination);
+        })
         .catch(error => console.log('Error: ', error)
         );
-    }, [disabled])
+
+        fetch('http://localhost:8000/sectors', {method: 'GET'})
+        .then(response => {
+            if(!response.ok)
+                throw new Error(`Something went wrong: ${response.statusText}`);
+            
+            return response.json();
+        })
+        .then(response => setSectors(response))
+        .catch(error => console.log('Error: ', error)
+        );
+    }, [disabled, page, filters])
+
+    function prevPageList(pagination){
+        if(pagination.prevPageNumber){
+            let listItem = document.getElementById('previous').classList.remove('disabled');
+            return(
+                <li class="page-item" onClick={() => setPage(pagination.prevPageNumber)}><a class="page-link" href="#">{pagination.prevPageNumber}</a></li>
+            )
+        }
+    }
+
+    function nextPageList(pagination){
+        if(pagination.nextPageNumber){
+            return(
+                <li class="page-item" onClick={() => setPage(pagination.nextPageNumber)}><a class="page-link" href="#">{pagination.nextPageNumber}</a></li>
+            )
+        }
+    }
+
+    function disablePrevious(pagination){
+        if(pagination.prevPageNumber === null){
+            let string = "disabled";
+            return string;
+        } else {
+            return null;
+        }
+    }
+
+    function disableNext(pagination){
+        if(pagination.nextPageNumber === null){
+            let string = "disabled";
+            return string;
+        } else {
+            return null;
+        }
+    }
+
+    function nextPage(pagination){
+        if(pagination.nextPageNumber){
+            setPage(pagination.nextPageNumber);
+        }
+    }
+
+    function previousPage(pagination){
+        if(pagination.prevPageNumber){
+            setPage(pagination.prevPageNumber);
+        }
+    }
+
+    function handleSector(e){
+        setFilters({...filters, sectorInput: e.target.value});
+    }
+
+    function handleName(e){
+        setFilters({...filters, nameInput: e.target.value});
+    } 
+    
+    const handleEmailWithDebounce = _.debounce(async (e) => {
+        setUserSearch({ ...userSearch, email: e.target.value })
+    }, 1000);
     
   return (
     <>
-        <Navbar /> 
+        <Navbar />
         <div className="container">
+            <div className="filters">
+                <div class="name-filter input-group mb-3">
+                    <input onChange={handleName} type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2"></input>
+                </div>
+                <select onChange={handleSector} className="form-control form-control-sm" id="inputCompanySector">
+                    <option value=""></option>
+                    {
+                        sectors.map((sector, index) => {
+                            return <option key={index} value={sector.id}>{sector.name}</option>
+                        })
+                    }
+                </select>
+            </div>
             <div className="table-responsive">
                 <table className="table">
                     <thead>
@@ -85,6 +191,21 @@ function Companies() {
                     </tbody>
                 </table>
             </div>
+            <nav aria-label="...">
+                <ul className="pagination">
+                    <li id="previous" className={"page-item "+disablePrevious(pagination)}>
+                        <a className="page-link" tabindex="-1" onClick={() => previousPage(pagination)}>Previous</a>
+                    </li>
+                    {prevPageList(pagination)}
+                    <li className="page-item active">
+                        <a className="page-link" href="#">{pagination.currentPage}<span className="sr-only">(current)</span></a>
+                    </li>
+                    {nextPageList(pagination)}
+                    <li id="next" className={"page-item "+disableNext(pagination)} >
+                        <a className="page-link" onClick={() => nextPage(pagination)}>Next</a>
+                    </li>                      
+                </ul>
+            </nav>
             <button type="button" onClick={() => history.push("/company/new")}>New Company</button>
             <div className="backdrop" disabled={disabled}>
                 <div className="pop-up">
