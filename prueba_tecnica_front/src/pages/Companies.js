@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { GlobalContext } from "../App";
+import _, { debounce } from 'lodash';
 import Navbar from "../components/Navbar";
 import "../styles/Companies.css";
 
@@ -136,14 +137,10 @@ function Companies() {
     function handleSector(e){
         setFilters({...filters, sectorInput: e.target.value});
     }
-
-    function handleName(e){
-        setFilters({...filters, nameInput: e.target.value});
-    } 
     
-    const handleEmailWithDebounce = _.debounce(async (e) => {
-        setUserSearch({ ...userSearch, email: e.target.value })
-    }, 1000);
+    const handleName = _.debounce(async (e) => {
+        setFilters({ ...filters, nameInput: e.target.value })
+    }, 500);
     
   return (
     <>
