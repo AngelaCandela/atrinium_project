@@ -138,7 +138,6 @@ function EditCompany() {
     <>
         <Navbar />
         <div className="container">
-            <p>Hi, you're here to edit company { companyToEditId }</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="inputCompanyName">Name*</label>
@@ -165,8 +164,8 @@ function EditCompany() {
                     </select>
                     <span id="text2"></span>
                 </div>
-                <button type="submit" className="btn btn-primary" value="Submit">Save changes</button>
-                <button type="button" className="btn btn-outline-primary" onClick={() => history.push("/companies")}>Cancel</button>
+                <button type="submit" className="btn btn-primary save-btn" value="Submit">Save changes</button>
+                <button type="button" className="btn" onClick={() => history.push("/companies")}>Cancel</button>
           </form>
         </div>
     </>

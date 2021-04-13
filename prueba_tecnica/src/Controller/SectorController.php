@@ -25,8 +25,7 @@ class SectorController extends AbstractController
     public function selectSectors(SectorRepository $sectorRepo, SerializerService $serializer): Response
     {
         $sectorsArray = [];
-        $sectors = $sectorRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
-
+        $sectors = $sectorRepo->findAll();
         foreach($sectors as $sector){
 
             $sectorsArray[] = $serializer->serializeSector($sector);

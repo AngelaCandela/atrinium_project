@@ -150,7 +150,14 @@ function Sectors() {
                     </tbody>
                 </table>
             </div>
-            <nav aria-label="...">
+            <div className="table-footer">
+                <div>
+                    <span>Total number of pages: {pagination.totalPages}</span><br></br>
+                    <span>Total number of sectors: {pagination.totalSectors}</span>
+                </div>
+                <button type="button" onClick={() => history.push("/sector/new")}>New Sector</button>
+            </div>
+            <nav className="pagination" aria-label="...">
                 <ul className="pagination">
                     <li id="previous" className={"page-item "+disablePrevious(pagination)}>
                         <a className="page-link" tabindex="-1" onClick={() => previousPage(pagination)}>Previous</a>
@@ -165,11 +172,10 @@ function Sectors() {
                     </li>                      
                 </ul>
             </nav>
-            <button className="m-auto" type="button" onClick={() => history.push("/sector/new")}>New Sector</button>
             <div className="backdrop" disabled={disabled}>
                 <div className="pop-up">
                     <p>Are you sure you want to delete this sector?</p>
-                    <div className="d-flex flex-column">
+                    <div className="confirmation-buttons">
                         <button type="button" onClick={deleteSector}>Accept</button>
                         <button type="button" onClick={() => setDisabled(true)}>Cancel</button>
                     </div>

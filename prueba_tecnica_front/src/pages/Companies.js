@@ -24,7 +24,7 @@ function Companies() {
 
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState(
-        {   totalSectors: 0,
+        {   totalCompanies: 0,
             totalPages: 0,
             currentPage: 1,
             previousPage: false,
@@ -148,10 +148,10 @@ function Companies() {
         <div className="container">
             <div className="filters">
                 <div class="name-filter input-group mb-3">
-                    <input onChange={handleName} type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2"></input>
+                    <input onChange={handleName} type="text" class="form-control" placeholder="Company's name" aria-label="Recipient's username" aria-describedby="button-addon2"></input>
                 </div>
                 <select onChange={handleSector} className="form-control form-control-sm" id="inputCompanySector">
-                    <option value=""></option>
+                    <option value="">Sector</option>
                     {
                         sectors.map((sector, index) => {
                             return <option key={index} value={sector.id}>{sector.name}</option>
@@ -188,7 +188,14 @@ function Companies() {
                     </tbody>
                 </table>
             </div>
-            <nav aria-label="...">
+            <div className="table-footer">
+                <div>
+                    <span>Total number of pages: {pagination.totalPages}</span><br></br>
+                    <span>Total number of companies: {pagination.totalCompanies}</span>
+                </div>
+                <button type="button" onClick={() => history.push("/company/new")}>New Company</button>
+            </div>
+            <nav className="pagination" aria-label="...">
                 <ul className="pagination">
                     <li id="previous" className={"page-item "+disablePrevious(pagination)}>
                         <a className="page-link" tabindex="-1" onClick={() => previousPage(pagination)}>Previous</a>
@@ -203,11 +210,10 @@ function Companies() {
                     </li>                      
                 </ul>
             </nav>
-            <button type="button" onClick={() => history.push("/company/new")}>New Company</button>
             <div className="backdrop" disabled={disabled}>
                 <div className="pop-up">
                     <p>Are you sure you want to delete this company?</p>
-                    <div className="d-flex flex-column">
+                    <div className="confirmation-buttons">
                         <button type="button" onClick={deleteCompany}>Accept</button>
                         <button type="button" onClick={() => setDisabled(true)}>Cancel</button>
                     </div>

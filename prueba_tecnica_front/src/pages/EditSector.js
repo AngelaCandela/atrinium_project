@@ -101,15 +101,14 @@ function EditSector() {
     <>
         <Navbar />
         <div className="container">
-            <p>Hi, you're here to edit sector { sectorToEditId }</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="inputCompanyName">Name*</label>
                     <input type="text" className="form-control" id="inputCompanyName" value={newData.name} onChange={handleName} />
                     <span id="text"></span>
                 </div>
-                <button type="submit" className="btn btn-primary" value="Submit">Save changes</button>
-                <button type="button" className="btn btn-outline-primary" onClick={() => history.push("/sectors")}>Cancel</button>
+                <button type="submit" className="btn btn-primary save-btn" value="Submit">Save changes</button>
+                <button type="button" className="btn" onClick={() => history.push("/sectors")}>Cancel</button>
           </form>
         </div>
     </>

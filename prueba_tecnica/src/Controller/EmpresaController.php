@@ -43,7 +43,7 @@ class EmpresaController extends AbstractController
         
         $pagerfanta->setMaxPerPage(10);
         $totalPages = $pagerfanta->getNbPages();
-        $totalSectors = count($companiesArray);
+        $totalCompanies = count($companiesArray);
 
         $currentPage = $pagerfanta->setCurrentPage($page);
         $prevPageNumber = null;
@@ -58,7 +58,7 @@ class EmpresaController extends AbstractController
         
         $pagerfanta->getCurrentPage();
         $pagination = [];
-        $pagination['totalSectors'] = $totalSectors;
+        $pagination['totalCompanies'] = $totalCompanies;
         $pagination['totalPages'] = $totalPages;
         $pagination['currentPage'] = $page;
         $pagination['prevPageNumber'] = $prevPageNumber;

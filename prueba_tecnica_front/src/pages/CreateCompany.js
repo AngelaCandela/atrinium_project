@@ -114,7 +114,6 @@ function CreateCompany() {
     <>
         <Navbar />
         <div className="container">
-            <p>Hi, you're here to create a new company!</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="inputCompanyName">Name*</label>
@@ -141,8 +140,8 @@ function CreateCompany() {
                     </select>
                     <span id="text2"></span>
                 </div>
-                <button type="submit" className="btn btn-primary" value="Submit">Create company</button>
-                <button type="button" className="btn btn-primary" onClick={() => history.push("/companies")}>Cancel</button>
+                <button type="submit" className="btn btn-primary save-btn" value="Submit">Create company</button>
+                <button type="button" className="btn" onClick={() => history.push("/companies")}>Cancel</button>
           </form>
         </div>
     </>

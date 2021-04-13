@@ -14,7 +14,7 @@ export default function Navbar() {
             <nav className="navbar navbar-default">
                 <div className="container">
                     <div className="navbar-header">
-                        <a href="#" className="navbar-brand">Atrinium</a>
+                        <a href="#" className="navbar-brand" id="/" onClick={redirect}>Atrinium</a>
                     </div>
                     <div>
                         <ul className="nav navbar-nav">

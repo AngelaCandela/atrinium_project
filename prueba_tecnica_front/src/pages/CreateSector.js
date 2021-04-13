@@ -77,15 +77,14 @@ function CreateSector() {
     <>
         <Navbar />
         <div className="container">
-            <p>Hi, you're here to create a new sector!</p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="inputCompanyName">Name*</label>
                     <input type="text" className="form-control" id="inputCompanyName" value={newData.name} onChange={handleName} />
                 </div>
                 <span id="text"></span>
-                <button type="submit" className="btn btn-primary" value="Submit">Create sector</button>
-                <button type="button" className="btn btn-primary" onClick={() => history.push("/sectors")}>Cancel</button>
+                <button type="submit" className="btn btn-primary save-btn" value="Submit">Create sector</button>
+                <button type="button" className="btn" onClick={() => history.push("/sectors")}>Cancel</button>
           </form>
         </div>
     </>

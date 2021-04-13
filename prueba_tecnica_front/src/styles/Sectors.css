@@ -29,3 +29,26 @@ div[disabled] {
     border-radius: 7px;
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 25%);
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-footer button {
+    margin-right: 50px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.save-btn {
+    margin-right: 20px;
+}
