@@ -44,6 +44,7 @@ $npm install
 Configure your database editing .env and set your database name, user and password.
 
 Launch the server, then run:
+
 ```$npm start```
 
 And you're good to go!
