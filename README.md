@@ -30,5 +30,22 @@ The project also features:
 - CSS 3
 - Bootstrap
 ## Setup
-Follow the steps in this link to clone this repository https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository
-$ git clone g
+Follow the steps in this link to clone this repository: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository
+
+```$ git clone https://github.com/AngelaCandela/atrinium_project.git```
+
+Then:
+```
+$cd prueba_tecnica
+$composer install
+$cd ../prueba_tecnica_front
+$npm install
+```
+Configure your database editing .env and set your database name, user and password.
+
+Launch the server, then run:
+```
+$npm start
+```
+
+And you're good to go!
