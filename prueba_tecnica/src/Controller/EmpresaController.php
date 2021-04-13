@@ -28,9 +28,7 @@ class EmpresaController extends AbstractController
         $name = $req->query->get('name');
         $sector = $req->query->get('sector');
 
-        $companiesArray = [];
-        //$companies = $empresaRepo->findBy([], ['id' => 'ASC']); // He usado el método findBy en lugar de findAll para poder ordenar los resultados por id
-        
+        $companiesArray = [];        
         $companies = $empresaRepo->findCompanies($em, $name, $sector);
 
         foreach($companies as $company){
